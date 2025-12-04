@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime & Media API v7 by Ntando Mods ✔️</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .api-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .api-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .category-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .youtube { background: #ff0000; color: white; }
+        .anime { background: #ff6b9d; color: white; }
+        .ai { background: #00d4ff; color: white; }
+        .image { background: #4ecdc4; color: white; }
+        .utility { background: #45b7d1; color: white; }
+        .social { background: #f39c12; color: white; }
+        .text { background: #9b59b6; color: white; }
+        .file { background: #2ecc71; color: white; }
+        .entertainment { background: #e74c3c; color: white; }
+        
+        .status-online {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 16px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+        
+        .tab-active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .loading-spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .dark-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+        
+        .dark-mode .glass {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
+</head>
+<body class="text-white">
+    <!-- Navigation -->
+    <nav class="glass fixed w-full top-0 z-50 px-6 py-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <i class="fas fa-rocket text-2xl"></i>
+                <h1 class="text-xl font-bold">Anime & Media API v7</h1>
+                <span class="category-badge anime">by Ntando Mods ✔️</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 bg-green-500 rounded-full status-online"></div>
+                    <span class="text-sm">API Status: <span id="apiStatus">Checking...</span></span>
+                </div>
+                <button onclick="toggleTheme()" class="p-2 rounded-lg hover:bg-white hover:bg-opacity-20">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 pt-24 pb-12">
+        <!-- Hero Section -->
+        <section class="text-center mb-12">
+            <h2 class="text-5xl font-bold mb-4">
+                <i class="fas fa-fire text-orange-500"></i> 30+ Free APIs
+            </h2>
+            <p class="text-xl mb-6">Anime, YouTube, AI, Images & Much More - All Free!</p>
+            <div class="flex justify-center space-x-4 mb-8">
+                <div class="glass px-6 py-3 rounded-lg">
+                    <i class="fas fa-server"></i>
+                    <span class="ml-2">Uptime: <span id="uptime">0s</span></span>
+                </div>
+                <div class="glass px-6 py-3 rounded-lg">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span class="ml-2">Requests: <span id="requestCount">0</span></span>
+                </div>
+                <div class="glass px-6 py-3 rounded-lg">
+                    <i class="fas fa-bolt"></i>
+                    <span class="ml-2">Latency: <span id="latency">0ms</span></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Search Bar -->
+        <section class="mb-8">
+            <div class="glass rounded-lg p-6">
+                <div class="flex space-x-4">
+                    <input type="text" id="searchInput" placeholder="Search APIs..." 
+                           class="flex-1 bg-white bg-opacity-20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    <button onclick="searchAPIs()" class="bg-purple-600 hover:bg-purple-700 px-6 py-2 rounded-lg transition">
+                        <i class="fas fa-search mr-2"></i>Search
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Category Tabs -->
+        <section class="mb-8">
+            <div class="glass rounded-lg p-2">
+                <div class="flex space-x-2 overflow-x-auto" id="categoryTabs">
+                    <button onclick="filterByCategory('all')" class="category-tab tab-active px-4 py-2 rounded-lg transition whitespace-nowrap">
+                        All APIs (30+)
+                    </button>
+                    <button onclick="filterByCategory('youtube')" class="category-tab px-4 py-2 rounded-lg transition whitespace-nowrap">
+                        <i class="fab fa-youtube text-red-500"></i> YouTube
+                    </button>
+                    <button onclick="filterByCategory('anime')" class="category-tab px-4 py-2 rounded-lg transition whitespace-nowrap">
+                        <i class="fas fa-play text-pink-500"></i> Anime
+                    </button>
+                    <button onclick="filterByCategory('ai')" class="category-tab px-4 py-2 rounded-lg transition whitespace-nowrap">
+                        <i class="fas fa-robot text-blue-500"></i> AI
+                    </button>
+                    <button onclick="filterByCategory('image')" class="category-tab px-4 py-2 rounded-lg transition whitespace-nowrap">
+                        <i class="fas fa-image text-green-500"></i> Images
+                    </button>
+                    <button onclick="filterByCategory('utility')" class="category-tab px-4 py-2 rounded-lg transition whitespace-nowrap">
+                        <i class="fas fa-tools text-blue-400"></i> Utilities
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- API Cards Grid -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12" id="apiGrid">
+            <!-- API cards will be generated here -->
+        </section>
+
+        <!-- API Tester Modal -->
+        <div id="apiTesterModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-6">
+            <div class="glass rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-2xl font-bold" id="modalTitle">API Tester</h3>
+                        <button onclick="closeModal()" class="text-white hover:text-gray-300">
+                            <i class="fas fa-times text-2xl"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h4 class="text-lg font-semibold mb-2">Endpoint</h4>
+                        <div class="code-block" id="apiEndpoint"></div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h4 class="text-lg font-semibold mb-2">Parameters</h4>
+                        <div id="apiParameters"></div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <button onclick="testAPI()" class="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg transition w-full">
+                            <i class="fas fa-play mr-2"></i>Test API
+                        </button>
+                    </div>
+                    
+                    <div id="apiResponse" class="hidden">
+                        <h4 class="text-lg font-semibold mb-2">Response</h4>
+                        <div class="code-block" id="responseContent"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass mt-12 py-8">
+        <div class="container mx-auto px-6 text-center">
+            <div class="mb-4">
+                <h3 class="text-xl font-bold mb-2">Anime & Media API v7 by Ntando Mods ✔️</h3>
+                <p class="text-gray-300">30+ Free APIs for Developers</p>
+            </div>
+            <div class="flex justify-center space-x-6 mb-4">
+                <a href="#" class="hover:text-purple-400 transition">
+                    <i class="fab fa-github text-2xl"></i>
+                </a>
+                <a href="#" class="hover:text-purple-400 transition">
+                    <i class="fab fa-twitter text-2xl"></i>
+                </a>
+                <a href="#" class="hover:text-purple-400 transition">
+                    <i class="fab fa-discord text-2xl"></i>
+                </a>
+            </div>
+            <p class="text-sm text-gray-400">
+                Made with <i class="fas fa-heart text-red-500"></i> for the developer community
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // API Data
+        const apis = [
+            // YouTube APIs
+            { id: 'ytsearch', name: 'YouTube Search', category: 'youtube', method: 'GET', endpoint: '/api/ytsearch', params: ['q (required)', 'limit (optional)'], icon: 'fab fa-youtube', description: 'Search YouTube videos' },
+            { id: 'ytdl', name: 'YouTube Download', category: 'youtube', method: 'GET', endpoint: '/api/ytdl', params: ['url (required)'], icon: 'fas fa-download', description: 'Download YouTube videos' },
+            { id: 'ytmp4', name: 'YouTube MP4', category: 'youtube', method: 'GET', endpoint: '/api/ytmp4', params: ['url (required)'], icon: 'fas fa-video', description: 'Convert to MP4' },
+            { id: 'ytmp3', name: 'YouTube MP3', category: 'youtube', method: 'GET', endpoint: '/api/ytmp3', params: ['url (required)'], icon: 'fas fa-music', description: 'Convert to MP3' },
+            
+            // Anime APIs
+            { id: 'anime-search', name: 'Anime Search', category: 'anime', method: 'GET', endpoint: '/api/anime/search', params: ['q (required)', 'limit (optional)'], icon: 'fas fa-search', description: 'Search anime' },
+            { id: 'anime-info', name: 'Anime Info', category: 'anime', method: 'GET', endpoint: '/api/anime/info', params: ['id (required)'], icon: 'fas fa-info-circle', description: 'Get anime details' },
+            { id: 'anime-episodes', name: 'Anime Episodes', category: 'anime', method: 'GET', endpoint: '/api/anime/episodes', params: ['id (required)'], icon: 'fas fa-list', description: 'Get episode list' },
+            { id: 'anime-characters', name: 'Anime Characters', category: 'anime', method: 'GET', endpoint: '/api/anime/characters', params: ['id (required)'], icon: 'fas fa-users', description: 'Get character list' },
+            { id: 'anime-random', name: 'Random Anime', category: 'anime', method: 'GET', endpoint: '/api/anime/random', params: [], icon: 'fas fa-random', description: 'Get random anime' },
+            
+            // AI APIs
+            { id: 'ai-chat', name: 'AI Chat', category: 'ai', method: 'POST', endpoint: '/api/ai/chat', params: ['message (required)', 'model (optional)'], icon: 'fas fa-comments', description: 'Chat with AI' },
+            { id: 'ai-image', name: 'AI Image', category: 'ai', method: 'POST', endpoint: '/api/ai/image', params: ['prompt (required)', 'size (optional)'], icon: 'fas fa-image', description: 'Generate AI images' },
+            { id: 'ai-text', name: 'AI Text', category: 'ai', method: 'POST', endpoint: '/api/ai/text', params: ['text (required)', 'action (optional)'], icon: 'fas fa-file-alt', description: 'Process text with AI' },
+            
+            // Image APIs
+            { id: 'image-lyrics', name: 'Lyrics Image', category: 'image', method: 'GET', endpoint: '/api/image/lyrics', params: ['title (required)', 'artist (optional)'], icon: 'fas fa-music', description: 'Create lyrics image' },
+            { id: 'bgremove', name: 'Background Remove', category: 'image', method: 'POST', endpoint: '/api/image/bgremove', params: [], icon: 'fas fa-cut', description: 'Remove image background' },
+            { id: 'image-resize', name: 'Image Resize', category: 'image', method: 'GET', endpoint: '/api/image/resize', params: ['url (required)', 'width (optional)', 'height (optional)'], icon: 'fas fa-expand-arrows-alt', description: 'Resize images' },
+            { id: 'image-filters', name: 'Image Filters', category: 'image', method: 'GET', endpoint: '/api/image/filters', params: ['url (required)', 'filter (optional)'], icon: 'fas fa-magic', description: 'Apply filters' },
+            { id: 'image-meme', name: 'Meme Generator', category: 'image', method: 'GET', endpoint: '/api/image/meme', params: ['text (required)', 'template (optional)'], icon: 'fas fa-laugh', description: 'Create memes' },
+            
+            // Utility APIs
+            { id: 'weather', name: 'Weather', category: 'utility', method: 'GET', endpoint: '/api/weather', params: ['city (required)'], icon: 'fas fa-cloud-sun', description: 'Get weather info' },
+            { id: 'shorten', name: 'URL Shortener', category: 'utility', method: 'GET', endpoint: '/api/shorten', params: ['url (required)'], icon: 'fas fa-link', description: 'Shorten URLs' },
+            { id: 'expand', name: 'URL Expander', category: 'utility', method: 'GET', endpoint: '/api/expand', params: ['short_url (required)'], icon: 'fas fa-external-link-alt', description: 'Expand short URLs' },
+            { id: 'qr', name: 'QR Code', category: 'utility', method: 'GET', endpoint: '/api/qr', params: ['text (required)', 'size (optional)'], icon: 'fas fa-qrcode', description: 'Generate QR codes' },
+            { id: 'validate-email', name: 'Email Validator', category: 'utility', method: 'POST', endpoint: '/api/validate/email', params: ['email (required)'], icon: 'fas fa-envelope', description: 'Validate emails' },
+            { id: 'validate-password', name: 'Password Strength', category: 'utility', method: 'POST', endpoint: '/api/validate/password', params: ['password (required)'], icon: 'fas fa-lock', description: 'Check password strength' },
+            
+            // Social Media APIs
+            { id: 'instagram', name: 'Instagram Info', category: 'social', method: 'GET', endpoint: '/api/social/instagram', params: ['username (required)'], icon: 'fab fa-instagram', description: 'Get Instagram profile' },
+            { id: 'tiktok', name: 'TikTok Info', category: 'social', method: 'GET', endpoint: '/api/social/tiktok', params: ['username (required)'], icon: 'fab fa-tiktok', description: 'Get TikTok profile' },
+            { id: 'twitter', name: 'Twitter Info', category: 'social', method: 'GET', endpoint: '/api/social/twitter', params: ['username (required)'], icon: 'fab fa-twitter', description: 'Get Twitter profile' },
+            
+            // Text Processing APIs
+            { id: 'text-translate', name: 'Text Translate', category: 'text', method: 'POST', endpoint: '/api/text/translate', params: ['text (required)', 'from (optional)', 'to (optional)'], icon: 'fas fa-language', description: 'Translate text' },
+            { id: 'text-summarize', name: 'Text Summarize', category: 'text', method: 'POST', endpoint: '/api/text/summarize', params: ['text (required)', 'length (optional)'], icon: 'fas fa-compress-alt', description: 'Summarize text' },
+            { id: 'text-analyze', name: 'Text Analyze', category: 'text', method: 'POST', endpoint: '/api/text/analyze', params: ['text (required)'], icon: 'fas fa-chart-bar', description: 'Analyze text' },
+            { id: 'text-sentiment', name: 'Sentiment Analysis', category: 'text', method: 'POST', endpoint: '/api/text/sentiment', params: ['text (required)'], icon: 'fas fa-smile', description: 'Analyze sentiment' },
+            
+            // File APIs
+            { id: 'pdf-extract', name: 'PDF Extract', category: 'file', method: 'POST', endpoint: '/api/pdf/extract', params: ['url (required)'], icon: 'fas fa-file-pdf', description: 'Extract PDF text' },
+            { id: 'convert-image', name: 'Image Convert', category: 'file', method: 'POST', endpoint: '/api/convert/image', params: ['url (required)', 'format (optional)'], icon: 'fas fa-exchange-alt', description: 'Convert images' },
+            { id: 'convert-html', name: 'HTML Convert', category: 'file', method: 'POST', endpoint: '/api/convert/html', params: ['url (required)'], icon: 'fas fa-code', description: 'Convert to HTML' },
+            
+            // Entertainment APIs
+            { id: 'jokes-random', name: 'Random Joke', category: 'entertainment', method: 'GET', endpoint: '/api/jokes/random', params: [], icon: 'fas fa-laugh-beam', description: 'Get random jokes' },
+            { id: 'quotes-random', name: 'Random Quote', category: 'entertainment', method: 'GET', endpoint: '/api/quotes/random', params: [], icon: 'fas fa-quote-left', description: 'Get random quotes' },
+            { id: 'news-random', name: 'Random News', category: 'entertainment', method: 'GET', endpoint: '/api/news/random', params: [], icon: 'fas fa-newspaper', description: 'Get random news' }
+        ];
+
+        let currentCategory = 'all';
+        let currentAPI = null;
+        let requestCount = 0;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderAPIs(apis);
+            updateAPIStatus();
+            setInterval(updateUptime, 1000);
+            setInterval(updateAPIStatus, 30000);
+        });
+
+        // Render API cards
+        function renderAPIs(apisToRender) {
+            const grid = document.getElementById('apiGrid');
+            grid.innerHTML = apisToRender.map(api => `
+                <div class="api-card glass rounded-lg p-6" onclick="openAPITester('${api.id}')">
+                    <div class="flex items-center mb-4">
+                        <i class="${api.icon} text-2xl mr-3"></i>
+                        <span class="category-badge ${api.category}">${api.category}</span>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2">${api.name}</h3>
+                    <p class="text-sm text-gray-300 mb-4">${api.description}</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs bg-gray-700 px-2 py-1 rounded">${api.method}</span>
+                        <i class="fas fa-arrow-right text-purple-400"></i>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Filter by category
+        function filterByCategory(category) {
+            currentCategory = category;
+            const tabs = document.querySelectorAll('.category-tab');
+            tabs.forEach(tab => tab.classList.remove('tab-active'));
+            event.target.classList.add('tab-active');
+            
+            const filtered = category === 'all' ? apis : apis.filter(api => api.category === category);
+            renderAPIs(filtered);
+        }
+
+        // Search APIs
+        function searchAPIs() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = apis.filter(api => 
+                api.name.toLowerCase().includes(query) || 
+                api.description.toLowerCase().includes(query)
+            );
+            renderAPIs(filtered);
+        }
+
+        // Open API tester
+        function openAPITester(apiId) {
+            currentAPI = apis.find(api => api.id === apiId);
+            if (!currentAPI) return;
+            
+            document.getElementById('modalTitle').textContent = currentAPI.name;
+            document.getElementById('apiEndpoint').textContent = `${currentAPI.method} ${currentAPI.endpoint}`;
+            
+            const paramsHtml = currentAPI.params.length > 0 ? currentAPI.params.map(param => {
+                const [name, type] = param.split(' (');
+                const cleanName = name.replace(':', '');
+                const isRequired = type && type.includes('required');
+                return `
+                    <div class="mb-4">
+                        <label class="block text-sm mb-2">${param}</label>
+                        <input type="text" 
+                               id="param-${cleanName}" 
+                               class="w-full bg-white bg-opacity-20 rounded px-3 py-2"
+                               placeholder="${isRequired ? 'Required parameter' : 'Optional parameter'}">
+                    </div>
+                `;
+            }).join('') : '<p class="text-gray-400">No parameters required</p>';
+            
+            document.getElementById('apiParameters').innerHTML = paramsHtml;
+            document.getElementById('apiResponse').classList.add('hidden');
+            document.getElementById('apiTesterModal').classList.remove('hidden');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('apiTesterModal').classList.add('hidden');
+        }
+
+        // Test API
+        async function testAPI() {
+            if (!currentAPI) return;
+            
+            const responseDiv = document.getElementById('apiResponse');
+            const responseContent = document.getElementById('responseContent');
+            
+            // Show loading
+            responseContent.innerHTML = '<div class="loading-spinner mx-auto"></div>';
+            responseDiv.classList.remove('hidden');
+            
+            try {
+                // Build request
+                let url = currentAPI.endpoint;
+                const params = {};
+                
+                if (currentAPI.method === 'GET') {
+                    const queryParams = new URLSearchParams();
+                    currentAPI.params.forEach(param => {
+                        const [name] = param.split(' (');
+                        const value = document.getElementById(`param-${name}`)?.value;
+                        if (value) queryParams.append(name, value);
+                    });
+                    if (queryParams.toString()) {
+                        url += '?' + queryParams.toString();
+                    }
+                } else {
+                    currentAPI.params.forEach(param => {
+                        const [name] = param.split(' (');
+                        const value = document.getElementById(`param-${name}`)?.value;
+                        if (value) params[name] = value;
+                    });
+                }
+                
+                const startTime = Date.now();
+                const response = await fetch(url, {
+                    method: currentAPI.method,
+                    headers: currentAPI.method === 'POST' ? { 'Content-Type': 'application/json' } : {},
+                    body: currentAPI.method === 'POST' ? JSON.stringify(params) : undefined
+                });
+                
+                const latency = Date.now() - startTime;
+                document.getElementById('latency').textContent = latency + 'ms';
+                
+                const data = await response.json();
+                requestCount++;
+                document.getElementById('requestCount').textContent = requestCount;
+                
+                responseContent.innerHTML = JSON.stringify(data, null, 2);
+                
+            } catch (error) {
+                responseContent.innerHTML = `Error: ${error.message}`;
+            }
+        }
+
+        // Update API status
+        async function updateAPIStatus() {
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+                document.getElementById('apiStatus').textContent = 'Online';
+                document.getElementById('uptime').textContent = data.data.uptime_human;
+            } catch (error) {
+                document.getElementById('apiStatus').textContent = 'Offline';
+            }
+        }
+
+        // Update uptime
+        function updateUptime() {
+            fetch('/api/status').then(res => res.json()).then(data => {
+                if (data.status === 'success') {
+                    document.getElementById('uptime').textContent = data.data.uptime_human;
+                }
+            }).catch(() => {});
+        }
+
+        // Toggle theme
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const icon = document.getElementById('themeIcon');
+            if (document.body.classList.contains('dark-mode')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        }
+
+        // Search on enter
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchAPIs();
+            }
+        });
+    </script>
+</body>
+</html>
