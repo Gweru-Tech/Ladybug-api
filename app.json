@@ -1,0 +1,36 @@
+{
+  "name": "Anime & Media API v7",
+  "description": "30+ Free APIs for Anime, YouTube, AI, Images and much more",
+  "keywords": ["api", "anime", "youtube", "ai", "free", "media"],
+  "website": "https://github.com/ntandomods/anime-media-api-v7",
+  "repository": "https://github.com/ntandomods/anime-media-api-v7.git",
+  "logo": "https://i.imgur.com/your-logo.png",
+  "success_url": "/api/status",
+  "env": {
+    "NODE_ENV": {
+      "description": "Node environment",
+      "value": "production",
+      "required": false
+    },
+    "PORT": {
+      "description": "Application port",
+      "value": "3000",
+      "required": false
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "free"
+    }
+  },
+  "addons": [],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "scripts": {
+    "postdeploy": "echo 'Deployment complete'"
+  }
+}
